@@ -1,0 +1,8 @@
+# Local databases / generated retrieval indexes
+data/db/
+data/processed/*.jsonl
+data/raw/github/
+
+# Local environment
+.env
+.env.local

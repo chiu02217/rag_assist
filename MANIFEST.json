@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "strategy": "package-by-responsibility",
+  "behavior_change": false,
+  "migration": {
+    "src/doc_loader.py": "src/rag_assist/ingestion/kubernetes_docs.py",
+    "src/chunker.py": "src/rag_assist/chunking/parent_child.py",
+    "src/parent_store.py": "src/rag_assist/storage/parent_store.py",
+    "src/indexer.py": "src/rag_assist/storage/qdrant_indexer.py",
+    "src/retriever.py": "src/rag_assist/retrieval/dense.py",
+    "src/bm25_retriever.py": "src/rag_assist/retrieval/bm25.py",
+    "src/rrf_utils.py": "src/rag_assist/retrieval/fusion.py",
+    "src/hybrid_retriever.py": "src/rag_assist/retrieval/hybrid.py",
+    "src/retrieval_metrics.py": "src/rag_assist/evaluation/metrics.py",
+    "src/evaluate_retrieval.py": "src/rag_assist/evaluation/runner.py",
+    "src/check_doc.py": "src/rag_assist/diagnostics/check_doc.py",
+    "src/inspect_doc.py": "src/rag_assist/diagnostics/inspect_doc.py",
+    "tests/test_metrics.py": "tests/unit/test_metrics.py",
+    "tests/test_rrf.py": "tests/unit/test_rrf.py",
+    "tests/test_embedding.py": "tests/integration/test_embedding.py",
+    "tests/test_payload.py": "tests/integration/test_qdrant_payload.py",
+    "tests/test_qdrant.py": "tests/integration/test_qdrant.py",
+    "tests/test_parent_store.py": "tests/integration/test_parent_store.py",
+    "tests/test_reranker.py": "tests/integration/test_reranker.py",
+    "tests/reset_qdrant.py": "scripts/reset_qdrant.py"
+  }
+}

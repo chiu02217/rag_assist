@@ -1,0 +1,63 @@
+# RAG central configuration refactor
+
+This is a behavior-preserving refactor. It centralizes data paths, Qdrant settings,
+model names, chunk parameters, retrieval limits, and metadata defaults.
+
+## Apply safely
+
+Run from the `rag_assist` repository root:
+
+```powershell
+python scripts/apply_config_refactor.py
+```
+
+The script creates a timestamped backup under `backups/` before editing files.
+
+Then verify:
+
+```powershell
+python -m pytest tests/unit -q
+python -m rag_assist.evaluation.runner --validate-only
+python -m rag_assist.retrieval.hybrid
+```
+
+Do not delete the backup until all three checks pass.
+
+## What this changes
+
+Instead of individual modules containing values like:
+
+```python
+Path("data/processed/...")
+"http://localhost:6333"
+"BAAI/bge-m3"
+```
+
+they read from:
+
+```python
+from rag_assist.config import get_settings
+
+settings = get_settings()
+```
+
+For example:
+
+```python
+INPUT_FILE = settings.chunks_file
+QDRANT_URL = settings.qdrant_url
+MODEL_NAME = settings.embedding_model
+```
+
+## Environment override
+
+See `.env.example`. The example file is documentation; Python does not automatically
+load `.env`.
+
+PowerShell example:
+
+```powershell
+$env:RAG_DENSE_TOP_K = "30"
+$env:RAG_QDRANT_URL = "http://localhost:6333"
+python -m rag_assist.retrieval.hybrid
+```

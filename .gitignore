@@ -1,0 +1,34 @@
+# 數據與敏感資訊
+data/*
+!data/.gitkeep
+.env
+.env.*
+!.env.example
+
+# Python 暫存與快取
+**/__pycache__/*
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.build/
+
+# 虛擬環境
+venv/
+.venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# IDE / 編輯器設定
+.vscode/
+.idea/
+*.swp
+*~
+
+# 系統檔案
+.DS_Store
+Thumbs.db
