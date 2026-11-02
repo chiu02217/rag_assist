@@ -19,7 +19,8 @@ class HybridRetriever:
         if not self.chunks:
             raise RuntimeError(f"No child chunks loaded from {self.settings.chunks_file}")
 
-        self.bm25_index = FilteredBM25Cache(self.chunks).get(
+        self.bm25_cache = FilteredBM25Cache(self.chunks)
+        self.bm25_index = self.bm25_cache.get(
             category=self.scope["category"],
             doc_type=self.scope["doc_type"],
             source_type=self.scope["source_type"],
@@ -37,7 +38,7 @@ class HybridRetriever:
             raise RuntimeError("Parent store is empty. Run the Qdrant indexer first.")
         self.client = QdrantClient(url=self.settings.qdrant_url)
 
-    def retrieve(self, query: str) -> list[dict[str, Any]]:
+    def retrieve(self, query: str, top_k: int | None = None) -> list[dict[str, Any]]:
         dense_results = dense_search(
             self.client, self.embedding_model, query,
             self.settings.dense_top_k, query_filter=self.query_filter,
@@ -54,7 +55,7 @@ class HybridRetriever:
         )
         return expand_to_parents(
             reranked, self.parent_store,
-            self.settings.final_top_parents,
+            top_k or self.settings.final_top_parents,
         )
 
     def close(self) -> None:

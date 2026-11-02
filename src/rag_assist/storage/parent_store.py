@@ -31,7 +31,8 @@ class ParentStore:
         )
 
         self.connection = sqlite3.connect(
-            self.db_file
+            self.db_file,
+            check_same_thread=False,
         )
         self.connection.row_factory = sqlite3.Row
 
@@ -138,7 +139,6 @@ class ParentStore:
         parents_file: Path | str = PARENTS_FILE,
     ) -> int:
         rows = []
-
         with Path(parents_file).open(
             "r",
             encoding="utf-8",
@@ -149,39 +149,33 @@ class ParentStore:
 
                 row = json.loads(line)
 
-                rows.append(
-                    (
-                        row["parent_id"],
-                        row["document_id"],
-                        row["parent_index"],
-                        row["title"],
-                        row["section"],
-                        row["source"],
-                        row.get(
-                            "source_type",
-                            "documentation",
-                        ),
-                        row.get(
-                            "source_id",
-                            "",
-                        ),
-                        row.get(
-                            "source_url",
-                            "",
-                        ),
-                        row["relative_path"],
-                        row["category"],
-                        row["doc_type"],
-                        row["content"],
-                        json.dumps(
-                            row.get(
-                                "metadata",
-                                {},
-                            ),
-                            ensure_ascii=False,
-                        ),
-                    )
-                )
+                rows.append(row)
+
+        return self.upsert_parents(rows)
+
+    def upsert_parents(
+        self,
+        parents: Iterable[dict[str, Any]],
+    ) -> int:
+        rows = [
+            (
+                row["parent_id"],
+                row["document_id"],
+                row["parent_index"],
+                row["title"],
+                row["section"],
+                row["source"],
+                row.get("source_type", "documentation"),
+                row.get("source_id", ""),
+                row.get("source_url", ""),
+                row["relative_path"],
+                row["category"],
+                row["doc_type"],
+                row["content"],
+                json.dumps(row.get("metadata", {}), ensure_ascii=False),
+            )
+            for row in parents
+        ]
 
         with self.connection:
             self.connection.executemany(
